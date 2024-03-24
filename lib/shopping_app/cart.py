@@ -1,8 +1,6 @@
-from item_manager import show_items
-
 class Cart:
     def __init__(self, owner):
-        self.set_owner(owner)
+        self.owner = owner
         self.items = []
 
     def items_list(self):
@@ -14,17 +12,19 @@ class Cart:
     def total_amount(self):
         price_list = []
         for item in self.items:
-            price_list.append(item.price)
+            price_list.append(item.price * item.quantity)  # Se multiplica por la cantidad
         return sum(price_list)
 
     def check_out(self):
         if self.owner.wallet.balance < self.total_amount():
-            pass    # Elimina esta línea una vez que hayas implementado el método check_out correctamente.
+            print("Insufficient funds in owner's wallet.")
+            return False
 
         # Transferir el precio de compra de los artículos del carrito
         # del monedero del propietario del carrito al monedero del propietario del artículo.
         for item in self.items:
-            item.owner.wallet.balance += item.price * item.quantity
+            item_owner = item.owner
+            item_owner.wallet.balance += item.price * item.quantity
             self.owner.wallet.balance -= item.price * item.quantity
 
             # Transferir la propiedad de todos los artículos del carrito al propietario del carrito.
@@ -32,3 +32,5 @@ class Cart:
 
         # Vaciar el contenido del carrito.
         self.items = []
+        print("Purchase successful!")
+        return True
